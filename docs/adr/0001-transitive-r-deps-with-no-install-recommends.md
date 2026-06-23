@@ -1,0 +1,5 @@
+# Transitive R dependencies in apt with --no-install-recommends
+
+We use `--no-install-recommends` in `apt-get install` to keep the image small. The `r2u` project packages R packages as apt packages (`r-cran-*`), but an apt package's `Depends` field often omits transitive R-level imports that the R package needs at load time. For example, `r-cran-shiny` only declares `r-cran-{cli,otel,sourcetools,withr,xtable}` as apt Depends, but the R package `shiny` imports `httpuv` — which is not listed as an apt Depends, Recommends, or Suggests. When `--no-install-recommends` is active, `httpuv` is never pulled in, and `requireNamespace("shiny")` fails silently despite the package directory being present at `/usr/lib/R/site-library/shiny`.
+
+The fix is to check which R-level imports are missing by running `requireNamespace()` inside the container after building, then add the missing `r-cran-*` packages explicitly to `apt-get install`. Do not rely on apt's dependency resolution alone when `--no-install-recommends` is active.

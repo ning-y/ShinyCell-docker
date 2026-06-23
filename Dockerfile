@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     r-cran-data.table \
     r-cran-matrix \
     r-cran-hdf5r \
+    r-cran-httpuv \
     r-cran-reticulate \
     r-cran-r.utils \
     r-cran-ggplot2 \
